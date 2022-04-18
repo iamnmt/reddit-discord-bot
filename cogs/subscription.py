@@ -1,13 +1,17 @@
 import discord
 from discord.ext import commands
 
+import json
+
 REDDIT_CATEGORY = ["best", "hot", "new"]
 
 
 class Subscription(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.subs = dict()
+        with open("subscription.json", "r") as f:
+            self.data = json.load(f)
+        self.subs = self.data['subs']
 
     @commands.group(
         name="sub",
@@ -45,6 +49,9 @@ class Subscription(commands.Cog):
                 )
                 continue
             await ctx.send(f"Subscribed to {category} of {subreddit}")
+
+        with open("subscription.json", "w") as f:
+            json.dump(self.data, f, indent=4)
 
     @sub.command(
         name="list",
@@ -84,6 +91,9 @@ class Subscription(commands.Cog):
                 if len(self.subs[subreddit]) == 0:
                     del self.subs[subreddit]
                 await ctx.send(f"Removed {category} from {subreddit}")
+                
+        with open("subscription.json", "w") as f:
+            json.dump(self.data, f, indent=4)
 
 
 def setup(bot):
