@@ -1,0 +1,1 @@
+# A bot that can subscribe to a list of subreddits and post them to a channel
