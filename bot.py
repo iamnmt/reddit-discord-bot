@@ -20,5 +20,7 @@ bot = commands.Bot(
 if __name__ == "__main__":
     bot.load_extension("cogs.subscription")
     print("Loaded cogs.subscription")
+    bot.load_extension("cogs.action")
+    print("Loaded cogs.action")
 
 bot.run(os.getenv("DISCORD_TOKEN"))
