@@ -17,10 +17,14 @@ bot = commands.Bot(
     help_command=help_command,
 )
 
+bot.remove_command("help")
+
 if __name__ == "__main__":
     bot.load_extension("cogs.subscription")
     print("Loaded cogs.subscription")
     bot.load_extension("cogs.action")
     print("Loaded cogs.action")
+    bot.load_extension("cogs.help")
+    print("Loaded cogs.help")
 
 bot.run(os.getenv("DISCORD_TOKEN"))
