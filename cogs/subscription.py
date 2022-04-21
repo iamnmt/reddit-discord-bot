@@ -1,14 +1,15 @@
+import json
+import os
+
+import asyncpraw
 import discord
 from discord.ext import commands
-import os
 from dotenv import load_dotenv
-import asyncpraw
 
-import json
-
-from utils.constants import REDDIT_CATEGORY, EMBED_COLOR
+from utils.constants import EMBED_COLOR, REDDIT_CATEGORY
 
 load_dotenv()
+
 
 class Subscription(commands.Cog):
     def __init__(self, bot):
@@ -63,7 +64,7 @@ class Subscription(commands.Cog):
                     subreddit, exact=True
                 ):
                     pass
-            except:
+            except Exception:
                 await ctx.send(f"Subreddit {subreddit} not found")
                 continue
 

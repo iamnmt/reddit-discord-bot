@@ -1,7 +1,7 @@
+import os
+
 import discord
 from discord.ext import commands
-
-import os
 from dotenv import load_dotenv
 
 from utils.constants import COMMAND_PREFIX

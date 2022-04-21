@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from utils.constants import EMBED_COLOR
 
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,7 +17,8 @@ class Help(commands.Cog):
             # No input, list all commands
 
             description = f"{self.bot.description}\n\n"
-            description += f"Use `{self.bot.command_prefix}help [command]` for more information about a command."
+            description += f"Use `{self.bot.command_prefix}help [command]` \
+            for more information about a command."
 
             emb = discord.Embed(
                 title="Help Menu",
@@ -33,9 +35,9 @@ class Help(commands.Cog):
 
             emb.add_field(
                 name="About",
-                value=f"GitHub repo: https://github.com/iamnmt/reddit-discord-bot",
+                value="GitHub repo: https://github.com/iamnmt/reddit-discord-bot",
             )
-            emb.set_footer(text=f"ver 0.0.1")
+            emb.set_footer(text="ver 0.0.1")
 
         elif len(input) == 1:
             # One input, list all commands in that group

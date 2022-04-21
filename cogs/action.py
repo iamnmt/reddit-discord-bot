@@ -1,15 +1,15 @@
-import os
 import json
-from dotenv import load_dotenv
-import discord
-from discord.ext import commands
-from discord.ext import tasks
+import os
 
 import asyncpraw
+import discord
+from discord.ext import commands, tasks
+from dotenv import load_dotenv
 
-from utils.constants import SUPPORTED_TASKS, EMBED_COLOR, PRAW_SUBMISSION_LIMIT
+from utils.constants import EMBED_COLOR, PRAW_SUBMISSION_LIMIT, SUPPORTED_TASKS
 
 load_dotenv()
+
 
 class Action(commands.Cog):
     def __init__(self, bot):
@@ -71,7 +71,7 @@ class Action(commands.Cog):
                             embed.set_image(url=url)
                             await ctx.send(embed=embed)
                             break
-                            
+
     @commands.group(
         name="schedule",
         brief="Scheduling commands",

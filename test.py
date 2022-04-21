@@ -1,8 +1,8 @@
-import discord
-from discord.ext import commands
-
 import os
 from glob import glob
+
+import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
