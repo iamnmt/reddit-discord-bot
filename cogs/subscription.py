@@ -54,6 +54,10 @@ class Subscription(commands.Cog):
         with open("subscription.json", "w") as f:
             json.dump(self.data, f, indent=4)
 
+    @add.error
+    async def add_error(self, ctx, error):
+        await ctx.invoke(self.bot.get_command("help"), "sub", "add")
+
     @sub.command(
         name="list",
         brief="List all subscribed subreddits",
@@ -102,6 +106,10 @@ class Subscription(commands.Cog):
 
         with open("subscription.json", "w") as f:
             json.dump(self.data, f, indent=4)
+
+    @remove.error
+    async def remove_error(self, ctx, error):
+        await ctx.invoke(self.bot.get_command("help"), "sub", "remove")
 
 
 def setup(bot):

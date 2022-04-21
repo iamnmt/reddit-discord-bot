@@ -105,6 +105,10 @@ class Action(commands.Cog):
         self.printers["image"]["task"].start()
         await ctx.send("Scheduled image fetching")
 
+    @schedule_image.error
+    async def schedule_image_error(self, ctx, error):
+        await ctx.invoke(self.bot.get_command("help"), "schedule", "image")
+
     @schedule.command(
         name="clear",
         brief="Clear scheduled task",
