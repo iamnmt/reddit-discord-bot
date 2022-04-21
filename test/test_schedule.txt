@@ -1,0 +1,3 @@
+schedule image 2
+schedule list
+schedule clear

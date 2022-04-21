@@ -1,0 +1,3 @@
+sub add hot memes funny
+sub list
+sub remove hot memes
