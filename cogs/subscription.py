@@ -4,6 +4,7 @@ from discord.ext import commands
 import json
 
 REDDIT_CATEGORY = ["best", "hot", "new"]
+EMBED_COLOR = discord.Color.dark_red()
 
 
 class Subscription(commands.Cog):
@@ -11,7 +12,7 @@ class Subscription(commands.Cog):
         self.bot = bot
         with open("subscription.json", "r") as f:
             self.data = json.load(f)
-        self.subs = self.data['subs']
+        self.subs = self.data["subs"]
 
     @commands.group(
         name="sub",
@@ -21,21 +22,23 @@ class Subscription(commands.Cog):
     )
     async def sub(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Invalid command. Use `!sub help` for more information.")
+            await ctx.invoke(self.bot.get_command("help"), "sub")
 
     @sub.command(
         name="add",
         brief="Subscribe to a list of subreddits",
-        description="""Subscribe to a list of subreddits
+        description="""
+        Subscribe to a list of subreddits
 
-    Reddit categories: best, hot, new
+        Reddit categories: best, hot, new
 
-    Example: !sub add hot memes
+        Usage: !sub add [category] [subreddits...]
+        Example: !sub add hot memes
     """,
     )
     async def add(self, ctx, category, *subreddits):
         if category not in REDDIT_CATEGORY:
-            await ctx.send("Invalid category. Use `!sub help` for more information")
+            await ctx.send("Invalid category. Use `!help sub add` for more information")
             return
 
         for subreddit in subreddits:
@@ -44,9 +47,7 @@ class Subscription(commands.Cog):
             elif category not in self.subs[subreddit]:
                 self.subs[subreddit].append(category)
             else:
-                await ctx.send(
-                    f"Already subscribed to {category} category of {subreddit}"
-                )
+                await ctx.send(f"Already subscribed to {category} of {subreddit}")
                 continue
             await ctx.send(f"Subscribed to {category} of {subreddit}")
 
@@ -59,28 +60,35 @@ class Subscription(commands.Cog):
         description="List all subscribed subreddits",
     )
     async def list(self, ctx):
-        message = """```Subscribed subreddits:
-        """
-        for subreddit in self.subs.keys():
-            message += (
-                f"\n + {subreddit}: {', '.join(self.subs[subreddit])}"
-            )
-        message += "```"
-        await ctx.send(message)
+        embed = discord.Embed(
+            title="Subscribed subreddits",
+            description="\n".join(
+                [
+                    f"{subreddit} - {', '.join(categories)}"
+                    for subreddit, categories in self.subs.items()
+                ]
+            ),
+            color=EMBED_COLOR,
+        )
+        await ctx.send(embed=embed)
 
     @sub.command(
         name="remove",
         brief="Remove a list of subreddits",
-        description="""Remove a list of subreddits
+        description="""
+        Remove a list of subreddits
 
         Reddit categories: best, hot, new
 
+        Usage: !sub remove [category] [subreddits...]
         Example: !sub remove hot memes
     """,
     )
     async def remove(self, ctx, category, *subreddits):
         if category not in REDDIT_CATEGORY:
-            await ctx.send("Invalid category. Use `!sub help` for more information.")
+            await ctx.send(
+                "Invalid category. Use `!help sub remove` for more information."
+            )
             return
         for subreddit in subreddits:
             if subreddit not in self.subs:
@@ -91,7 +99,7 @@ class Subscription(commands.Cog):
                 if len(self.subs[subreddit]) == 0:
                     del self.subs[subreddit]
                 await ctx.send(f"Removed {category} from {subreddit}")
-                
+
         with open("subscription.json", "w") as f:
             json.dump(self.data, f, indent=4)
 

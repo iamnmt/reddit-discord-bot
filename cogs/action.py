@@ -11,6 +11,7 @@ from reddit.action.fetch import fetch_img
 load_dotenv()
 
 SUPPORTED_TASKS = ["image"]
+EMBED_COLOR = discord.Color.dark_red()
 
 
 class Action(commands.Cog):
@@ -28,7 +29,7 @@ class Action(commands.Cog):
     )
     async def fetch(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Invalid command. Use `!fetch help` for more information.")
+            await ctx.invoke(self.bot.get_command("help"), "fetch")
 
     @fetch.command(
         name="image",
@@ -59,7 +60,9 @@ class Action(commands.Cog):
                     for post in result_dict[sub][category]:
                         title, url = post["title"], post["url"]
                         embed = discord.Embed(
-                            title=title, description=f"{sub}/{category}"
+                            title=title,
+                            description=f"{sub}/{category}",
+                            color=EMBED_COLOR,
                         )
                         embed.set_image(url=url)
                         await ctx.send(embed=embed)
@@ -74,18 +77,17 @@ class Action(commands.Cog):
     )
     async def schedule(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send(
-                "Invalid command. Use `!help schedule` for more information."
-            )
+            await ctx.invoke(self.bot.get_command("help"), "schedule")
 
     @schedule.command(
         name="image",
-        brief="Schedule image fetching",
-        description="""Schedule image fetching
+        brief="Schedule image fetching task",
+        description="""
+        Schedule image fetching task
 
-        Interval is in hours.
-        Usage: !schedule image 1
-        """,
+        Usage: !schedule image [interval (in hours)]
+        Example: !schedule image 1
+    """,
     )
     async def schedule_image(self, ctx, interval: int):
         if interval <= 0:
@@ -106,10 +108,12 @@ class Action(commands.Cog):
     @schedule.command(
         name="clear",
         brief="Clear scheduled task",
-        description="""Clear scheduled task
+        description="""
+        Clear scheduled task
 
-        Tasks: image
-        """,
+        Usage: !schedule clear [task (image)]
+        Example: !schedule clear image
+    """,
     )
     async def schedule_clear(self, ctx, *tasks):
         if len(tasks) == 0:
@@ -134,12 +138,15 @@ class Action(commands.Cog):
         name="list", brief="List scheduled tasks", description="List scheduled tasks"
     )
     async def schedule_list(self, ctx):
-        embed = discord.Embed(title="Scheduled tasks")
+        embed = discord.Embed(
+            title="Scheduled tasks",
+            color=EMBED_COLOR,
+        )
         for task in SUPPORTED_TASKS:
             if self.printers[task]:
                 embed.add_field(
                     name=f"{task}",
-                    value=f"Interval: {self.printers[task]['interval']} hours",
+                    value=f"{self.printers[task]['interval']} hours",
                 )
         await ctx.send(embed=embed)
 
