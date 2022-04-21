@@ -36,7 +36,7 @@ class Subscription(commands.Cog):
         Example: !sub add hot memes
     """,
     )
-    async def add(self, ctx, category, *subreddits):
+    async def sub_add(self, ctx, category, *subreddits):
         if category not in REDDIT_CATEGORY:
             await ctx.send("Invalid category. Use `!help sub add` for more information")
             return
@@ -54,8 +54,8 @@ class Subscription(commands.Cog):
         with open("subscription.json", "w") as f:
             json.dump(self.data, f, indent=4)
 
-    @add.error
-    async def add_error(self, ctx, error):
+    @sub_add.error
+    async def sub_add_error(self, ctx, error):
         await ctx.invoke(self.bot.get_command("help"), "sub", "add")
 
     @sub.command(
@@ -63,7 +63,7 @@ class Subscription(commands.Cog):
         brief="List all subscribed subreddits",
         description="List all subscribed subreddits",
     )
-    async def list(self, ctx):
+    async def sub_list(self, ctx):
         embed = discord.Embed(
             title="Subscribed subreddits",
             description="\n".join(
@@ -88,7 +88,7 @@ class Subscription(commands.Cog):
         Example: !sub remove hot memes
     """,
     )
-    async def remove(self, ctx, category, *subreddits):
+    async def sub_remove(self, ctx, category, *subreddits):
         if category not in REDDIT_CATEGORY:
             await ctx.send(
                 "Invalid category. Use `!help sub remove` for more information."
@@ -107,8 +107,8 @@ class Subscription(commands.Cog):
         with open("subscription.json", "w") as f:
             json.dump(self.data, f, indent=4)
 
-    @remove.error
-    async def remove_error(self, ctx, error):
+    @sub_remove.error
+    async def sub_remove_error(self, ctx, error):
         await ctx.invoke(self.bot.get_command("help"), "sub", "remove")
 
 
