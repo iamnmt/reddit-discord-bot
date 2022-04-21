@@ -1,4 +1,4 @@
-# A bot that can subscribe subreddits and post them to a channel
+# A bot that can subscribe to subreddits and post them to a channel
 
 ## Quick start
 
