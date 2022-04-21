@@ -5,18 +5,23 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
-from reddit.auth.headers import make_headers
-from reddit.action.fetch import fetch_img
+import asyncpraw
 
 load_dotenv()
 
 SUPPORTED_TASKS = ["image"]
 EMBED_COLOR = discord.Color.dark_red()
+PRAW_SUBMISSION_LIMIT = 10
 
 
 class Action(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.reddit = asyncpraw.Reddit(
+            client_id=os.environ["REDDIT_CLIENT_ID"],
+            client_secret=os.environ["REDDIT_PRIVATE_KEY"],
+            user_agent="reddit-discord-bot v0.0.1",
+        )
         self.printers = {
             "image": None,
         }
@@ -41,34 +46,35 @@ class Action(commands.Cog):
         with open("subscription.json", "r") as f:
             data = json.load(f)
         if data:
-            subs = data["subs"]
-            headers = None
-            if os.environ.get("IS_DEV", False):
-                print("Using saved headers")
-                with open("headers.json", "r") as f:
-                    headers = json.load(f)
-            else:
-                headers = make_headers(
-                    os.environ["REDDIT_CLIENT_ID"],
-                    os.environ["REDDIT_PRIVATE_KEY"],
-                    os.environ["REDDIT_ACCOUNT_USERNAME"],
-                    os.environ["REDDIT_ACCOUNT_PASSWORD"],
-                )
-            result_dict = fetch_img(headers, subs)
-            for sub in result_dict.keys():
-                for category in result_dict[sub].keys():
-                    for post in result_dict[sub][category]:
-                        title, url = post["title"], post["url"]
-                        embed = discord.Embed(
-                            title=title,
-                            description=f"{sub}/{category}",
-                            color=EMBED_COLOR,
-                        )
-                        embed.set_image(url=url)
-                        await ctx.send(embed=embed)
-
-            headers = None
-
+            sub_to_category = data["subs"]
+            for sub in sub_to_category.keys():
+                print(f"Fetching images from {sub}")
+                for category in sub_to_category[sub]:
+                    subreddit = await self.reddit.subreddit(sub)
+                    submissions_list = None
+                    if category == "top":
+                        submissions_list = subreddit.top(limit=PRAW_SUBMISSION_LIMIT)
+                    elif category == "hot":
+                        submissions_list = subreddit.hot(limit=PRAW_SUBMISSION_LIMIT)
+                    elif category == "new":
+                        submissions_list = subreddit.new(limit=PRAW_SUBMISSION_LIMIT)
+                    async for submission in submissions_list:
+                        if submission.is_self:
+                            continue
+                        url = submission.url
+                        if url.endswith(".jpg") or url.endswith(".png"):
+                            title = submission.title
+                            permalink = submission.permalink
+                            embed = discord.Embed(
+                                title=title,
+                                description=f"{sub}/{category}",
+                                url=f"https://reddit.com{permalink}",
+                                color=EMBED_COLOR,
+                            )
+                            embed.set_image(url=url)
+                            await ctx.send(embed=embed)
+                            break
+                            
     @commands.group(
         name="schedule",
         brief="Scheduling commands",

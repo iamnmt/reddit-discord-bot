@@ -3,7 +3,7 @@ from discord.ext import commands
 
 import json
 
-REDDIT_CATEGORY = ["best", "hot", "new"]
+REDDIT_CATEGORY = ["top", "hot", "new"]
 EMBED_COLOR = discord.Color.dark_red()
 
 
@@ -30,7 +30,7 @@ class Subscription(commands.Cog):
         description="""
         Subscribe to a list of subreddits
 
-        Reddit categories: best, hot, new
+        Reddit categories: top, hot, new
 
         Usage: !sub add [category] [subreddits...]
         Example: !sub add hot memes
@@ -82,7 +82,7 @@ class Subscription(commands.Cog):
         description="""
         Remove a list of subreddits
 
-        Reddit categories: best, hot, new
+        Reddit categories: top, hot, new
 
         Usage: !sub remove [category] [subreddits...]
         Example: !sub remove hot memes
