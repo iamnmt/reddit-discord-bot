@@ -1,8 +1,12 @@
 import discord
 from discord.ext import commands
+import os
+from dotenv import load_dotenv
+import asyncpraw
 
 import json
 
+load_dotenv()
 REDDIT_CATEGORY = ["top", "hot", "new"]
 EMBED_COLOR = discord.Color.dark_red()
 
@@ -10,6 +14,12 @@ EMBED_COLOR = discord.Color.dark_red()
 class Subscription(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.reddit = asyncpraw.Reddit(
+            client_id=os.environ["REDDIT_CLIENT_ID"],
+            client_secret=os.environ["REDDIT_PRIVATE_KEY"],
+            user_agent="reddit-discord-bot v0.0.1",
+        )
+
         with open("subscription.json", "r") as f:
             self.data = json.load(f)
         self.subs = self.data["subs"]
@@ -42,6 +52,22 @@ class Subscription(commands.Cog):
             return
 
         for subreddit in subreddits:
+            # Check if subreddit exists
+            try:
+                # Have to loop over the list of subreddits because from the docs:
+                # """
+                # The act of calling a method that returns a ListingGenerator
+                # does not result in any network requests until you begin to
+                # iterate through the ListingGenerator.
+                # """
+                async for _ in self.reddit.subreddits.search_by_name(
+                    subreddit, exact=True
+                ):
+                    pass
+            except:
+                await ctx.send(f"Subreddit {subreddit} not found")
+                continue
+
             if subreddit not in self.subs:
                 self.subs[subreddit] = [category]
             elif category not in self.subs[subreddit]:
