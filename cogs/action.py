@@ -7,12 +7,9 @@ from discord.ext import tasks
 
 import asyncpraw
 
+from utils.constants import SUPPORTED_TASKS, EMBED_COLOR, PRAW_SUBMISSION_LIMIT
+
 load_dotenv()
-
-SUPPORTED_TASKS = ["image"]
-EMBED_COLOR = discord.Color.dark_red()
-PRAW_SUBMISSION_LIMIT = 10
-
 
 class Action(commands.Cog):
     def __init__(self, bot):

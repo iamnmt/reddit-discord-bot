@@ -4,6 +4,8 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 
+from utils.constants import COMMAND_PREFIX
+
 load_dotenv()
 
 description = """A bot that can subscribe to a list of subreddits and post them to a channel.
@@ -11,7 +13,7 @@ description = """A bot that can subscribe to a list of subreddits and post them 
 help_command = commands.DefaultHelpCommand(no_category="Commands")
 intents = discord.Intents.default()
 bot = commands.Bot(
-    command_prefix="!",
+    command_prefix=COMMAND_PREFIX,
     description=description,
     intents=intents,
     help_command=help_command,

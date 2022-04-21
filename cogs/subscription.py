@@ -6,10 +6,9 @@ import asyncpraw
 
 import json
 
-load_dotenv()
-REDDIT_CATEGORY = ["top", "hot", "new"]
-EMBED_COLOR = discord.Color.dark_red()
+from utils.constants import REDDIT_CATEGORY, EMBED_COLOR
 
+load_dotenv()
 
 class Subscription(commands.Cog):
     def __init__(self, bot):

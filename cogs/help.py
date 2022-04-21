@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
 
-EMBED_COLOR = discord.Color.dark_red()
-
+from utils.constants import EMBED_COLOR
 
 class Help(commands.Cog):
     def __init__(self, bot):
